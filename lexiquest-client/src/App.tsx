@@ -1,11 +1,15 @@
 import React from 'react';
+import {BrowserRouter, Route, Routes} from "react-router-dom";
+import {MenuLayout} from "./layouts/MenuLayout";
+import {GameLayout} from "./layouts/GameLayout";
 
-function App() {
+export function App() {
     return (
-        <div className="text-center text-xl font-bold">
-            Hello, World!
-        </div>
+        <BrowserRouter>
+            <Routes>
+                <Route path={"/"} element={<MenuLayout/>}/>
+                <Route path={"/game"} element={<GameLayout/>}/>
+            </Routes>
+        </BrowserRouter>
     );
 }
-
-export default App;
