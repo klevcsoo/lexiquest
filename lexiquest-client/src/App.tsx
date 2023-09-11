@@ -2,7 +2,7 @@ import React from 'react';
 
 function App() {
     return (
-        <div>
+        <div className="text-center text-xl font-bold">
             Hello, World!
         </div>
     );
