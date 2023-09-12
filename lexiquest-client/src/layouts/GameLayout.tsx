@@ -1,5 +1,9 @@
+import {WordInput} from "../components/WordInput";
+
 export function GameLayout() {
     return (
-        <div>játék</div>
-    )
+        <div>
+            <WordInput/>
+        </div>
+    );
 }

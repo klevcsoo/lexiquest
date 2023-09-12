@@ -3,8 +3,9 @@ import {LetterCorrectness} from "../types/LetterCorrectness";
 import {mockValidation} from "../lib/mockValidation";
 import {useSearchParams} from "react-router-dom";
 import {CHAR_COUNT_URL_PARAM} from "../lib/config";
+import {ValidationFunction} from "../types/ValidationFunction";
 
-export function useValidation() {
+export function useValidation(): [ValidationFunction, boolean] {
     const [params] = useSearchParams();
     const [loading, setLoading] = useState(false);
 
@@ -21,5 +22,7 @@ export function useValidation() {
 }
 
 async function validateGuess(charCount: number, word: string): Promise<LetterCorrectness[]> {
-    return await mockValidation("tudomány".slice(0, charCount), word);
+    const secret = "tudomány".slice(0, charCount);
+    console.log("secret:", secret);
+    return await mockValidation(secret, word);
 }
