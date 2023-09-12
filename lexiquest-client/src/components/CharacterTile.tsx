@@ -4,7 +4,7 @@ import {useMemo} from "react";
 export function CharacterTile(props: {
     value: string
     correctness: LetterCorrectness
-    focus: boolean
+    focus?: boolean
 }) {
     const bgColour = useMemo<string>(() => {
         switch (props.correctness) {
