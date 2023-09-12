@@ -3,6 +3,7 @@ import {useState} from "react";
 import {AttemptHistoryEntry} from "../types/AttemptHistoryEntry";
 import {AttemptHistory} from "../components/AttemptHistory";
 import {MAX_DAILY_ATTEMPTS} from "../lib/config";
+import {isCorrect} from "../lib/utils";
 
 export function GameLayout() {
     const [history, setHistory] = useState<AttemptHistoryEntry[]>([]);
@@ -10,11 +11,11 @@ export function GameLayout() {
 
     return (
         <div className="w-full p-12 flex flex-col gap-8">
-            <p className="text-xl">
-                <b>{attempt}</b> / {MAX_DAILY_ATTEMPTS}
+            <p className="text-3xl text-center">
+                még <b>{MAX_DAILY_ATTEMPTS - attempt + 1}</b> lehetőség
             </p>
             <WordInput onValidation={result => {
-                if (result.correctness.every(value => value === "correct")) {
+                if (isCorrect(result.correctness)) {
                     console.log("done");
                     return;
                 }

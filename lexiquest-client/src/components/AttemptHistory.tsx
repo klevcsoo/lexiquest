@@ -22,6 +22,9 @@ export function AttemptHistory(props: AttemptHistoryProps) {
                         <CharacterTile key={`${attemptIndex}-${characterIndex}`} value={char}
                                        correctness={entry.correctness[characterIndex]}/>
                     ))}
+                    <p className="text-xl text-transparent">
+                        <b>{array.length - attemptIndex}</b> / {MAX_DAILY_ATTEMPTS}
+                    </p>
                 </div>
             ))}
         </Fragment>

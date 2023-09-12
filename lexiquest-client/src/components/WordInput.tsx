@@ -5,6 +5,7 @@ import {ACCEPTABLE_CHARACTERS, CHAR_COUNT_URL_PARAM} from "../lib/config";
 import {LetterCorrectness} from "../types/LetterCorrectness";
 import {CharacterTile} from "./CharacterTile";
 import {AttemptHistoryEntry} from "../types/AttemptHistoryEntry";
+import {isCorrect} from "../lib/utils";
 
 export interface WordInputProps {
     onValidation(result: AttemptHistoryEntry): void;
@@ -23,15 +24,19 @@ export function WordInput(props: WordInputProps) {
     );
 
     const runValidation = useCallback(() => {
-        validate(word).then(value => {
+        validate(word).then(result => {
             props.onValidation({
                 word: word,
-                correctness: value,
+                correctness: result,
                 timestamp: new Date()
             });
 
-            setWord("");
-            setCorrectness([]);
+            if (isCorrect(result)) {
+                setCorrectness(new Array<LetterCorrectness>(word.length).fill("correct"));
+            } else {
+                setWord("");
+                setCorrectness([]);
+            }
         }).catch(console.error);
     }, [props, validate, word]);
 
