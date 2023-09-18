@@ -4,8 +4,8 @@ from typing import Annotated
 import models
 from schema.wordbase import WordBase
 from sqlalchemy.orm import Session
-from dictionary_reader import read_dictionary_file
-import datetime
+from utilities.dictionary_reader import read_dictionary_file
+from utilities.word_picker import get_daly_word_index
 
 word = APIRouter()
 
@@ -26,3 +26,8 @@ async def load_words(db: db_dependency):
         db.add(db_word)
         db.commit()
         print(f"The '{word}' word is saved")
+
+@word.get("/get-daily-word", status_code=status.HTTP_200_OK)
+async def get_daily_word(db: Session = Depends(get_db)):
+    words = db.query(models.Word).all()
+    return words[get_daly_word_index(len(words))].content
