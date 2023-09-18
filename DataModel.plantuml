@@ -1,0 +1,32 @@
+@startuml DataModel
+entity Log {
+    UUID uuid_v4 <<PK>>
+    User int <<FK>>
+    Timestamp timestamp
+    Content text
+}
+
+entity Word {
+    ID int <<PK>>
+    Length int
+    Content text
+}
+
+entity User {
+    ID int <<PK>>
+    Name text
+}
+
+entity Validation {
+    ID int <<PK>>
+    UID int <<FK>>
+    Guess text
+    Result text
+    Date date
+    /' Constraint kell, ahol is nem lehet 6-nál több
+       record, ahol a dátum és a UID megegyezik. '/
+}
+
+Validation }o--o| User
+Log }o--o| User
+@enduml
