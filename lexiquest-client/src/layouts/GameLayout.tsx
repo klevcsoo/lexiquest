@@ -6,7 +6,7 @@ import {Header} from "../components/Header";
 import {useAttempHistory} from "../hooks/useAttempHistory";
 
 export function GameLayout() {
-    const [attemptHistory, refreshAttemptHistory, loadingAttemptHistory] = useAttempHistory();
+    const [attemptHistory, loadingAttemptHistory] = useAttempHistory();
     const remaningAttempts = useMemo<number | undefined>(() => {
         return !!attemptHistory ? MAX_DAILY_ATTEMPTS - attemptHistory.entries.length : undefined;
     }, [attemptHistory]);
@@ -26,7 +26,8 @@ export function GameLayout() {
                         <span>még <b>{remaningAttempts}</b> próbálkozás</span>
                     )}
                 </p>
-                <WordInput onValidation={refreshAttemptHistory}/>
+                <WordInput onValidation={() => {
+                }}/>
                 <AttemptHistory attemptHistory={attemptHistory}/>
             </div>
         </Fragment>

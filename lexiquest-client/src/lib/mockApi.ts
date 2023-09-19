@@ -4,9 +4,9 @@ import {GameDayData} from "../types/GameDayData";
 import {AttemptHistoryData} from "../types/AttemptHistoryData";
 import {MAX_DAILY_ATTEMPTS} from "./config";
 import {isCorrect} from "./utils";
+import {updateAttemptHistory, updateSolution} from "./pubsub";
 
 const MOCK_START_DATE = new Date("2023-08-25");
-const MOCK_LOCAL_STORAGE_KEY = "attempt_history";
 
 /**
  * Ez csak egy mock függvény ami imitálja a validációs API választ.
@@ -49,7 +49,10 @@ export async function mockValidation(secret: string, guess: string): Promise<Let
         correctness: result,
         timestamp: new Date()
     });
-    window.localStorage.setItem(MOCK_LOCAL_STORAGE_KEY, JSON.stringify(attemptHistory));
+    window.localStorage.setItem("attempt_history", JSON.stringify(attemptHistory));
+
+    updateAttemptHistory();
+    updateSolution();
 
     await sleep(200);
     return result;
@@ -75,7 +78,7 @@ export async function mockGetGameDay(): Promise<GameDayData> {
 export async function mockGetAttempHistory(): Promise<AttemptHistoryData> {
     console.log(`MOCK API CALL: attempt history`);
 
-    const saved = window.localStorage.getItem(MOCK_LOCAL_STORAGE_KEY);
+    const saved = window.localStorage.getItem("attempt_history");
     if (!saved) {
         return {entries: []};
     }
@@ -95,7 +98,9 @@ export async function mockGetSolutionOfTheDay(): Promise<string | undefined> {
 }
 
 ;(window as any)["clearAttemptHistory"] = () => {
-    window.localStorage.removeItem(MOCK_LOCAL_STORAGE_KEY);
+    window.localStorage.removeItem("attempt_history");
+    updateAttemptHistory();
+    updateSolution();
 };
 
 async function sleep(milliseconds: number) {

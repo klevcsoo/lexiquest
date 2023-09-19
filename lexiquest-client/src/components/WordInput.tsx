@@ -12,7 +12,7 @@ export interface WordInputProps {
 
 export function WordInput(props: WordInputProps) {
     const [validate, loadingValidation] = useValidation();
-    const [solution, refreshSolution, loadingSolution] = useSolutionOfTheDay();
+    const [solution, loadingSolution] = useSolutionOfTheDay();
 
     const [word, setWord] = useState("");
     const [correctness, setCorrectness] = useState<LetterCorrectness[]>([]);
@@ -25,10 +25,8 @@ export function WordInput(props: WordInputProps) {
 
             setCorrectness(allCorrect ? result.correctness : []);
             setWord(prevState => allCorrect ? prevState : "");
-
-            refreshSolution();
         }).catch(console.error);
-    }, [props, refreshSolution, validate, word]);
+    }, [props, validate, word]);
 
     useEffect(() => {
         const handler = (event: KeyboardEvent) => {
@@ -63,6 +61,10 @@ export function WordInput(props: WordInputProps) {
             setWord(solution);
             setCorrectness(new Array<LetterCorrectness>(solution.length).fill("correct"));
             setDisabled(true);
+        } else {
+            setWord("");
+            setCorrectness([]);
+            setDisabled(false);
         }
     }, [solution]);
 

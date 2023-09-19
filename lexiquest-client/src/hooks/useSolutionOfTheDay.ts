@@ -1,20 +1,19 @@
-import {useCallback, useEffect, useState} from "react";
-import {mockGetSolutionOfTheDay} from "../lib/mockApi";
+import {useEffect, useState} from "react";
+import {offSolution, onSolution} from "../lib/pubsub";
 
-export function useSolutionOfTheDay(): [string | undefined, () => void, boolean] {
+export function useSolutionOfTheDay(): [string | undefined, boolean] {
     const [solution, setSolution] = useState<string>();
     const [loading, setLoading] = useState(true);
 
-    const refresh = useCallback(() => {
-        mockGetSolutionOfTheDay()
-            .then(setSolution)
-            .catch(console.error)
-            .finally(() => setLoading(false));
+    useEffect(() => {
+        const handler = (solution: string | undefined) => {
+            setSolution(solution);
+            setLoading(false);
+        };
+
+        onSolution(handler);
+        return () => offSolution(handler);
     }, []);
 
-    useEffect(() => {
-        refresh();
-    }, [refresh]);
-
-    return [solution, refresh, loading];
+    return [solution, loading];
 }
