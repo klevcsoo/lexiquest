@@ -1,7 +1,5 @@
 import {LetterCorrectness} from "./LetterCorrectness";
 
-export interface AttemptHistoryEntry {
-    word: string;
+export interface ValidationResult {
     correctness: LetterCorrectness[];
-    timestamp: Date;
 }

@@ -1,6 +1,11 @@
 import {LetterCorrectness} from "../types/LetterCorrectness";
 import {GameDayData} from "../types/GameDayData";
 
+import {AttemptHistoryData} from "../types/AttemptHistoryData";
+import {MAX_DAILY_ATTEMPTS} from "./config";
+import {isCorrect} from "./utils";
+import {updateAttemptHistory, updateSolution} from "./pubsub";
+
 const MOCK_START_DATE = new Date("2023-08-25");
 
 /**
@@ -9,6 +14,8 @@ const MOCK_START_DATE = new Date("2023-08-25");
  * @param guess a felhasználó tipp szava
  */
 export async function mockValidation(secret: string, guess: string): Promise<LetterCorrectness[]> {
+    console.log(`MOCK API CALL: validation`);
+
     if (secret.length !== guess.length) {
         throw new Error("Failed to compare words: lengths differ");
     }
@@ -36,7 +43,18 @@ export async function mockValidation(secret: string, guess: string): Promise<Let
         }
     }
 
-    await sleep(Math.random() * 1000);
+    const attemptHistory = await mockGetAttempHistory();
+    attemptHistory.entries.push({
+        word: guess,
+        correctness: result,
+        timestamp: new Date()
+    });
+    window.localStorage.setItem("attempt_history", JSON.stringify(attemptHistory));
+
+    updateAttemptHistory();
+    updateSolution();
+
+    await sleep(200);
     return result;
 }
 
@@ -45,13 +63,55 @@ export async function mockValidation(secret: string, guess: string): Promise<Let
  * dátumát a szerver szerint.
  */
 export async function mockGetGameDay(): Promise<GameDayData> {
+    console.log(`MOCK API CALL: game day info`);
+
     const today = new Date();
     const diff = (today.getTime() - MOCK_START_DATE.getTime()) / 86400000;
 
-    await sleep(Math.random() * 1000);
+    await sleep(200);
     return {day: Math.ceil(diff), date: today};
 }
 
+/**
+ * Mock függvény, amin visszaadja a jelenlegi próbálkozásokat.
+ */
+export async function mockGetAttempHistory(): Promise<AttemptHistoryData> {
+    console.log(`MOCK API CALL: attempt history`);
+
+    const saved = window.localStorage.getItem("attempt_history");
+    if (!saved) {
+        return {entries: []};
+    }
+
+    const entries = (JSON.parse(saved) as AttemptHistoryData).entries.map(value => {
+        value.timestamp = new Date(value.timestamp);
+        return value;
+    });
+
+    await sleep(200);
+    return {entries: entries};
+}
+
+export async function mockGetSolutionOfTheDay(): Promise<string | undefined> {
+    console.log(`MOCK API CALL: solution of the day`);
+    return await canAccessSolution() ? "tudom" : undefined;
+}
+
+;(window as any)["clearAttemptHistory"] = () => {
+    window.localStorage.removeItem("attempt_history");
+    updateAttemptHistory();
+    updateSolution();
+};
+
 async function sleep(milliseconds: number) {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
+}
+
+async function canAccessSolution(): Promise<boolean> {
+    const history = (await mockGetAttempHistory());
+    const noLuck = history.entries.length >= MAX_DAILY_ATTEMPTS;
+    const guessedRight = !!history.entries.find(value => isCorrect(value.correctness));
+
+    console.log("can access solution: ", noLuck || guessedRight);
+    return noLuck || guessedRight;
 }

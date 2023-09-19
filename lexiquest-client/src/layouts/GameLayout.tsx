@@ -1,37 +1,34 @@
 import {WordInput} from "../components/WordInput";
-import {Fragment, useState} from "react";
-import {AttemptHistoryEntry} from "../types/AttemptHistoryEntry";
+import {Fragment, useMemo} from "react";
 import {AttemptHistory} from "../components/AttemptHistory";
 import {MAX_DAILY_ATTEMPTS} from "../lib/config";
-import {isCorrect} from "../lib/utils";
 import {Header} from "../components/Header";
+import {useAttempHistory} from "../hooks/useAttempHistory";
 
 export function GameLayout() {
-    const [history, setHistory] = useState<AttemptHistoryEntry[]>([]);
-    const [attempt, setAttempt] = useState(1);
+    const [attemptHistory, loadingAttemptHistory] = useAttempHistory();
+    const remaningAttempts = useMemo<number | undefined>(() => {
+        return !!attemptHistory ? MAX_DAILY_ATTEMPTS - attemptHistory.entries.length : undefined;
+    }, [attemptHistory]);
 
-    return (
+    return loadingAttemptHistory || !attemptHistory ? (
+        <div className="w-screen h-screen grid place-content-center">
+            <h1 className="text-3xl animate-pulse">Betöltés...</h1>
+        </div>
+    ) : (
         <Fragment>
             <Header/>
             <div className="w-full p-12 flex flex-col gap-8">
                 <p className="text-3xl text-center">
-                    még <b>{MAX_DAILY_ATTEMPTS - attempt + 1}</b> lehetőség
+                    {!remaningAttempts ? (
+                        <span>a helyes szó volt:</span>
+                    ) : (
+                        <span>még <b>{remaningAttempts}</b> próbálkozás</span>
+                    )}
                 </p>
-                <WordInput onValidation={result => {
-                    if (isCorrect(result.correctness)) {
-                        console.log("done");
-                        return;
-                    }
-
-                    setAttempt(prevState => prevState + 1);
-                    setHistory(prevState => {
-                        if (!prevState.find(value => value.timestamp === result.timestamp)) {
-                            prevState.push(result);
-                        }
-                        return prevState;
-                    });
+                <WordInput onValidation={() => {
                 }}/>
-                <AttemptHistory history={history}/>
+                <AttemptHistory attemptHistory={attemptHistory}/>
             </div>
         </Fragment>
     );

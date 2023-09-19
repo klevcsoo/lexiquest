@@ -1,17 +1,16 @@
-import {AttemptHistoryEntry} from "../types/AttemptHistoryEntry";
 import {MAX_DAILY_ATTEMPTS} from "../lib/config";
 import {CharacterTile} from "./CharacterTile";
 import {Fragment} from "react";
+import {AttemptHistoryData} from "../types/AttemptHistoryData";
 
 export interface AttemptHistoryProps {
-    history: AttemptHistoryEntry[];
+    attemptHistory: AttemptHistoryData;
 }
 
 export function AttemptHistory(props: AttemptHistoryProps) {
-    console.log(props.history);
     return (
         <Fragment>
-            {props.history.sort((a, b) => {
+            {props.attemptHistory.entries.sort((a, b) => {
                 return b.timestamp.getTime() - a.timestamp.getTime();
             }).map((entry, attemptIndex, array) => (
                 <div key={attemptIndex} className="flex flex-row gap-4 justify-center ">
