@@ -3,27 +3,24 @@ import {useValidation} from "../hooks/useValidation";
 import {ACCEPTABLE_CHARACTERS, CHARACTER_COUNT} from "../lib/config";
 import {LetterCorrectness} from "../types/LetterCorrectness";
 import {CharacterTile} from "./CharacterTile";
-import {AttemptHistoryEntry} from "../types/AttemptHistoryEntry";
 import {isCorrect} from "../lib/utils";
 
 export interface WordInputProps {
-    onValidation(result: AttemptHistoryEntry): void;
+    disabledWithSolution?: string;
+
+    onValidation(): void;
 }
 
 export function WordInput(props: WordInputProps) {
     const [validate, loadingValidation] = useValidation();
-    const [word, setWord] = useState("");
+    const [word, setWord] = useState(props.disabledWithSolution ?? "");
     const [correctness, setCorrectness] = useState(
         new Array<LetterCorrectness>(CHARACTER_COUNT).fill("unknown")
     );
 
     const runValidation = useCallback(() => {
         validate(word).then(result => {
-            props.onValidation({
-                word: word,
-                correctness: result,
-                timestamp: new Date()
-            });
+            props.onValidation();
 
             if (isCorrect(result)) {
                 setCorrectness(new Array<LetterCorrectness>(word.length).fill("correct"));
@@ -36,7 +33,7 @@ export function WordInput(props: WordInputProps) {
 
     useEffect(() => {
         const handler = (event: KeyboardEvent) => {
-            if (loadingValidation) return;
+            if (loadingValidation || props.disabledWithSolution) return;
 
             if (event.key === "Enter" && word.length === CHARACTER_COUNT) {
                 runValidation();
@@ -60,7 +57,7 @@ export function WordInput(props: WordInputProps) {
 
         window.addEventListener("keydown", handler);
         return () => window.removeEventListener("keydown", handler);
-    }, [loadingValidation, runValidation, word]);
+    }, [loadingValidation, props.disabledWithSolution, runValidation, word]);
 
     return (
         <div className={`flex flex-row gap-4 justify-center 

@@ -5,3 +5,7 @@ export interface AttemptHistoryEntry {
     correctness: LetterCorrectness[];
     timestamp: Date;
 }
+
+export interface AttemptHistoryData {
+    entries: AttemptHistoryEntry[];
+}
