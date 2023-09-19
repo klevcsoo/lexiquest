@@ -1,22 +1,19 @@
 import {useCallback, useState} from "react";
 import {LetterCorrectness} from "../types/LetterCorrectness";
 import {mockValidation} from "../lib/mockApi";
-import {useSearchParams} from "react-router-dom";
-import {CHAR_COUNT_URL_PARAM} from "../lib/config";
 import {ValidationFunction} from "../types/ValidationFunction";
+import {CHARACTER_COUNT} from "../lib/config";
 
 export function useValidation(): [ValidationFunction, boolean] {
-    const [params] = useSearchParams();
     const [loading, setLoading] = useState(false);
 
     const validate = useCallback(async (word: string) => {
         setLoading(true);
 
-        const len = parseInt(params.get(CHAR_COUNT_URL_PARAM) ?? "5");
-        return await validateGuess(len, word).finally(() => {
+        return await validateGuess(CHARACTER_COUNT, word).finally(() => {
             setLoading(false);
         });
-    }, [params]);
+    }, []);
 
     return [validate, loading];
 }

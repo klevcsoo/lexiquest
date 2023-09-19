@@ -1,7 +1,6 @@
-import {useCallback, useEffect, useMemo, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {useValidation} from "../hooks/useValidation";
-import {useSearchParams} from "react-router-dom";
-import {ACCEPTABLE_CHARACTERS, CHAR_COUNT_URL_PARAM} from "../lib/config";
+import {ACCEPTABLE_CHARACTERS, CHARACTER_COUNT} from "../lib/config";
 import {LetterCorrectness} from "../types/LetterCorrectness";
 import {CharacterTile} from "./CharacterTile";
 import {AttemptHistoryEntry} from "../types/AttemptHistoryEntry";
@@ -12,15 +11,10 @@ export interface WordInputProps {
 }
 
 export function WordInput(props: WordInputProps) {
-    const [params] = useSearchParams();
-    const characterCount = useMemo(() => {
-        return parseInt(params.get(CHAR_COUNT_URL_PARAM) ?? "5");
-    }, [params]);
-
     const [validate, loadingValidation] = useValidation();
     const [word, setWord] = useState("");
     const [correctness, setCorrectness] = useState(
-        new Array<LetterCorrectness>(characterCount).fill("unknown")
+        new Array<LetterCorrectness>(CHARACTER_COUNT).fill("unknown")
     );
 
     const runValidation = useCallback(() => {
@@ -44,7 +38,7 @@ export function WordInput(props: WordInputProps) {
         const handler = (event: KeyboardEvent) => {
             if (loadingValidation) return;
 
-            if (event.key === "Enter" && word.length === characterCount) {
+            if (event.key === "Enter" && word.length === CHARACTER_COUNT) {
                 runValidation();
                 return;
             }
@@ -55,7 +49,7 @@ export function WordInput(props: WordInputProps) {
                         return prevState.slice(0, prevState.length - 1);
                     }
 
-                    if (prevState.length < characterCount) {
+                    if (prevState.length < CHARACTER_COUNT) {
                         return prevState + event.key;
                     }
 
@@ -66,12 +60,12 @@ export function WordInput(props: WordInputProps) {
 
         window.addEventListener("keydown", handler);
         return () => window.removeEventListener("keydown", handler);
-    }, [characterCount, loadingValidation, runValidation, word]);
+    }, [loadingValidation, runValidation, word]);
 
     return (
         <div className={`flex flex-row gap-4 justify-center 
         ${loadingValidation ? "opacity-50 animate-pulse" : "opacity-100 animate-none"}`}>
-            {(new Array(characterCount).fill(null)).map((_, index) => (
+            {(new Array(CHARACTER_COUNT).fill(null)).map((_, index) => (
                 <CharacterTile key={index} value={word[index] ?? ""}
                                correctness={correctness[index]}
                                focus={word.length === index}/>
