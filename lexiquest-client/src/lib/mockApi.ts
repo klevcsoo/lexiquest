@@ -1,4 +1,7 @@
 import {LetterCorrectness} from "../types/LetterCorrectness";
+import {GameDayData} from "../types/GameDayData";
+
+const MOCK_START_DATE = new Date("2023-08-25");
 
 /**
  * Ez csak egy mock függvény ami imitálja a validációs API választ.
@@ -35,6 +38,18 @@ export async function mockValidation(secret: string, guess: string): Promise<Let
 
     await sleep(Math.random() * 1000);
     return result;
+}
+
+/**
+ * Mock függvény amely visszaadja a jelenlegi nap számát és
+ * dátumát a szerver szerint.
+ */
+export async function mockGetGameDay(): Promise<GameDayData> {
+    const today = new Date();
+    const diff = (today.getTime() - MOCK_START_DATE.getTime()) / 86400000;
+
+    await sleep(Math.random() * 1000);
+    return {day: Math.ceil(diff), date: today};
 }
 
 async function sleep(milliseconds: number) {

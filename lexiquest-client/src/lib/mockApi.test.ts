@@ -1,5 +1,5 @@
 import {LetterCorrectness} from "../types/LetterCorrectness";
-import {mockValidation} from "./mockValidation";
+import {mockValidation} from "./mockApi";
 
 describe("mock API validation", () => {
     // noinspection SpellCheckingInspection
