@@ -4,37 +4,31 @@ import {ACCEPTABLE_CHARACTERS, CHARACTER_COUNT} from "../lib/config";
 import {LetterCorrectness} from "../types/LetterCorrectness";
 import {CharacterTile} from "./CharacterTile";
 import {isCorrect} from "../lib/utils";
+import {useSolutionOfTheDay} from "../hooks/useSolutionOfTheDay";
 
 export interface WordInputProps {
-    onValidation(): void;
+    onValidation(isCorrect: boolean): void;
 }
 
 export function WordInput(props: WordInputProps) {
     const [validate, loadingValidation] = useValidation();
+    const [solution, refreshSolution, loadingSolution] = useSolutionOfTheDay();
+
     const [word, setWord] = useState("");
-    const [correctness, setCorrectness] = useState(
-        new Array<LetterCorrectness>(CHARACTER_COUNT).fill("unknown")
-    );
+    const [correctness, setCorrectness] = useState<LetterCorrectness[]>([]);
     const [disabled, setDisabled] = useState(false);
 
     const runValidation = useCallback(() => {
         validate(word).then(result => {
-            props.onValidation();
+            const allCorrect = isCorrect(result.correctness);
+            props.onValidation(allCorrect);
 
-            if (isCorrect(result.correctness)) {
-                setCorrectness(result.correctness);
-            } else {
-                setWord("");
-                setCorrectness([]);
-            }
+            setCorrectness(allCorrect ? result.correctness : []);
+            setWord(prevState => allCorrect ? prevState : "");
 
-            if (!!result.solution) {
-                setWord(result.solution);
-                setCorrectness(new Array<LetterCorrectness>(word.length).fill("correct"));
-                setDisabled(true);
-            }
+            refreshSolution();
         }).catch(console.error);
-    }, [props, validate, word]);
+    }, [props, refreshSolution, validate, word]);
 
     useEffect(() => {
         const handler = (event: KeyboardEvent) => {
@@ -64,9 +58,17 @@ export function WordInput(props: WordInputProps) {
         return () => window.removeEventListener("keydown", handler);
     }, [loadingValidation, runValidation, disabled, word]);
 
+    useEffect(() => {
+        if (!!solution) {
+            setWord(solution);
+            setCorrectness(new Array<LetterCorrectness>(solution.length).fill("correct"));
+            setDisabled(true);
+        }
+    }, [solution]);
+
     return (
         <div className={`flex flex-row gap-4 justify-center 
-        ${loadingValidation || disabled ?
+        ${loadingValidation || loadingSolution || disabled ?
             "opacity-50 animate-pulse" : "opacity-100 animate-none"
         }`}>
             {(new Array(CHARACTER_COUNT).fill(null)).map((_, index) => (

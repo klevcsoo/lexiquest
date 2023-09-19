@@ -1,5 +1,5 @@
 import {useCallback, useEffect, useState} from "react";
-import {mockRetriveAttempts} from "../lib/mockApi";
+import {mockGetAttempHistory} from "../lib/mockApi";
 import {AttemptHistoryData} from "../types/AttemptHistoryData";
 
 export function useAttempHistory(): [AttemptHistoryData | undefined, () => void, boolean] {
@@ -7,7 +7,7 @@ export function useAttempHistory(): [AttemptHistoryData | undefined, () => void,
     const [loading, setLoading] = useState(true);
 
     const refresh = useCallback(() => {
-        mockRetriveAttempts()
+        mockGetAttempHistory()
             .then(setAttemptHistory)
             .catch(console.error)
             .finally(() => setLoading(false));
