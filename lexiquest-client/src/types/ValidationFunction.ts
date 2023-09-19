@@ -1,3 +1,3 @@
-import {LetterCorrectness} from "./LetterCorrectness";
+import {ValidationResult} from "./ValidationResult";
 
-export type ValidationFunction = (word: string) => Promise<LetterCorrectness[]>
+export type ValidationFunction = (word: string) => Promise<ValidationResult>

@@ -47,7 +47,7 @@ export async function mockValidation(secret: string, guess: string): Promise<Let
     });
     window.localStorage.setItem(MOCK_LOCAL_STORAGE_KEY, JSON.stringify(attemptHistory));
 
-    await sleep(Math.random() * 1000);
+    await sleep(200);
     return result;
 }
 
@@ -59,7 +59,7 @@ export async function mockGetGameDay(): Promise<GameDayData> {
     const today = new Date();
     const diff = (today.getTime() - MOCK_START_DATE.getTime()) / 86400000;
 
-    await sleep(Math.random() * 1000);
+    await sleep(200);
     return {day: Math.ceil(diff), date: today};
 }
 
@@ -77,7 +77,7 @@ export async function mockRetriveAttempts(): Promise<AttemptHistoryData> {
         return value;
     });
 
-    await sleep(Math.random() * 1000);
+    await sleep(200);
     return {entries: entries};
 }
 

@@ -21,9 +21,9 @@ export function GameLayout() {
             <div className="w-full p-12 flex flex-col gap-8">
                 <p className="text-3xl text-center">
                     {!remaningAttempts ? (
-                        <span>már <b>nincs</b> próbálkozás</span>
+                        <span>a helyes szó volt:</span>
                     ) : (
-                        <span>még {remaningAttempts} próbálkozás</span>
+                        <span>még <b>{remaningAttempts}</b> próbálkozás</span>
                     )}
                 </p>
                 <WordInput onValidation={refreshAttemptHistory}/>
