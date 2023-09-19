@@ -1,6 +1,6 @@
 import {useCallback, useState} from "react";
 import {LetterCorrectness} from "../types/LetterCorrectness";
-import {mockValidation} from "../lib/mockValidation";
+import {mockValidation} from "../lib/mockApi";
 import {useSearchParams} from "react-router-dom";
 import {CHAR_COUNT_URL_PARAM} from "../lib/config";
 import {ValidationFunction} from "../types/ValidationFunction";
