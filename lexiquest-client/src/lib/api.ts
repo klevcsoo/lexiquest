@@ -2,18 +2,19 @@ import {getDeviceID, getUserID} from "./identification";
 import {LS_KEY_USER_ID} from "./config";
 import {LetterCorrectness} from "../types/LetterCorrectness";
 
-const API_ORIGIN = "lcoalhost:8000";
+const API_ORIGIN = "localhost:8000";
 
 export async function apiCreateUser() {
-    const response = await fetch(`http://${API_ORIGIN}/create-user`, {
-        method: "POST",
-        body: JSON.stringify({
-            "user_name": getDeviceID()
-        })
+    const query = new URLSearchParams({
+        "user_name": getDeviceID()
+    });
+
+    const response = await fetch(`http://${API_ORIGIN}/create-user?${query}`, {
+        method: "POST"
     });
 
     if (!response.ok) {
-        throw new Error(`Authentication Error: ${(await response.json())["msg"]}`);
+        throw new Error(`Authentication Error: ${JSON.stringify(await response.json())}`);
     }
 
     const uid = await response.text();
@@ -31,11 +32,12 @@ export async function apiValidation(guess: string): Promise<LetterCorrectness[]>
         body: JSON.stringify({
             uid: uid,
             word: guess
-        })
+        }),
+        headers: {"Content-Type": "application/json"}
     });
 
     if (!response.ok) {
-        throw new Error(`Validation Error: ${(await response.json())["msg"]}`);
+        throw new Error(`Validation Error: ${JSON.stringify(await response.json())}`);
     }
 
     return (await response.text()).split(";").map<LetterCorrectness>(value => {
