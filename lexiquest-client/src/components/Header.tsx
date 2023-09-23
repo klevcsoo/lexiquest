@@ -5,7 +5,7 @@ export function Header() {
     const [dayData, loadingDayData] = useGameDayData();
 
     return (
-        <div className="sticky top-4 mx-4 p-4 bg-white rounded-lg shadow-md
+        <div className="sticky top-0 m-4 p-4 bg-white rounded-lg shadow-md
         flex flex-row justify-between items-center">
             <Link to="/">
                 <h1 className="font-thin text-4xl text-center select-none">
