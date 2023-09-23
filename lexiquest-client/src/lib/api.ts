@@ -1,10 +1,13 @@
 import {getDeviceID, getUserID} from "./identification";
-import {LS_KEY_USER_ID} from "./config";
+import {LS_KEY_USER_ID, USE_MOCK_API} from "./config";
 import {LetterCorrectness} from "../types/LetterCorrectness";
+import {mockValidation} from "./mockApi";
 
 const API_ORIGIN = "localhost:8000";
 
 export async function apiCreateUser() {
+    if (USE_MOCK_API) return;
+
     const query = new URLSearchParams({
         "user_name": getDeviceID()
     });
@@ -22,6 +25,10 @@ export async function apiCreateUser() {
 }
 
 export async function apiValidation(guess: string): Promise<LetterCorrectness[]> {
+    if (USE_MOCK_API) {
+        return mockValidation("tudom", guess);
+    }
+
     const uid = getUserID();
     if (!uid) {
         throw new Error("Authentication Error: User ID missing");
