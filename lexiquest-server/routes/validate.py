@@ -4,6 +4,7 @@ from typing import Annotated
 import models
 from schema.validatebase import ValidateBase
 from schema.guess import Guess
+from schema.logbase import LogBase
 from sqlalchemy.orm import Session
 from datetime import date
 from utilities.word_picker import get_daly_word_index
@@ -36,6 +37,15 @@ async def validatetion(guess: Guess, db: db_dependency):
         result = get_validation_result(guess.word,  words[get_daly_word_index(len(words))].content))
     db_validate = models.Validate(**validate.dict())
     db.add(db_validate)
+    db.commit()
+    # Validálás logolása
+    log = LogBase(
+        uid = validate.uid,
+        timestamp = validate.date,
+        content = "User with id={0} tried the word '{1}'. The corrent anwser was '{2}'. The result is: [{3}]".
+        format(guess.uid, guess.word, words[get_daly_word_index(len(words))].content, validate.result))
+    db_log = models.Log(**log.dict())
+    db.add(db_log)
     db.commit()
     return validate.result
 

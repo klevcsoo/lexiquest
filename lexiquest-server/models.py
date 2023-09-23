@@ -19,3 +19,10 @@ class Validate(Base):
     date = Column(DateTime)
     guess = Column(String(50))
     result = Column(String(50))
+
+class Log(Base):
+    __tablename__= "log"
+    id = Column(Integer, primary_key=True, index=True)
+    uid = Column(Integer, ForeignKey('user.id'))
+    timestamp = Column(DateTime)
+    content = Column(String(255))
