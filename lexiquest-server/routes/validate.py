@@ -47,3 +47,10 @@ async def get_user_today_attempts(uid: int,db: Session = Depends(get_db)):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     # A user mai probálkozásai 
     return db.query(models.Validate).filter(models.Validate.uid == uid, models.Validate.date == date.today()).all()
+
+@validate.get("/get-current-day", status_code=status.HTTP_200_OK)
+async def get_current_day():
+    startdate = date(2023, 9, 23)
+    diff = date.today() - startdate
+    print(diff.days)
+    return diff.days
