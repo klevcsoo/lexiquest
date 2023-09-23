@@ -38,12 +38,10 @@ async def get_daily_word(uid: int,db: Session = Depends(get_db)):
     # A user mai probálkozásai 
     user_today_validates = db.query(models.Validate).filter(
         models.Validate.uid == uid, models.Validate.date == date.today())
-
     has_used_all_attemps = len(user_today_validates.all()) >= 6
     has_correct_guess = len(user_today_validates.filter(models.Validate.result == "1;1;1;1;1").all()) != 0
-
     if not has_used_all_attemps or not has_correct_guess:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User must attempt or solve the puzzle six "
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User must solve or attempt the puzzle six "
                                                                           "times to access the daily word.")
     words = db.query(models.Word).all()
     return words[get_daly_word_index(len(words))].content

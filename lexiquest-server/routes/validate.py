@@ -38,3 +38,12 @@ async def validatetion(guess: Guess, db: db_dependency):
     db.add(db_validate)
     db.commit()
     return validate.result
+
+@validate.get("/get-user-today-attempts", status_code=status.HTTP_200_OK)
+async def get_user_today_attempts(uid: int,db: Session = Depends(get_db)):
+    # Létezik-e a felhasználó
+    user = db.query(models.User).filter(models.User.id == uid).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    # A user mai probálkozásai 
+    return db.query(models.Validate).filter(models.Validate.uid == uid, models.Validate.date == date.today()).all()
