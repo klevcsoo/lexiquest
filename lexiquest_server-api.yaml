@@ -1,0 +1,64 @@
+openapi: "3.0.3"
+info:
+  title: "lexiquest API"
+  description: "lexiquest API"
+  version: "1.0.0"
+servers:
+  - url: "http://localhost:8000"
+paths:
+  /create-user:
+    post:
+      summary: "POST create-user"
+      parameters: 
+        - name: "user_name"
+          in: "query"
+          required: true 
+      responses:
+        "201":
+          description: "OK"
+          content: string
+  /validate:
+    post:
+      summary: "validation"
+      requestBody:
+        required: true
+        content:
+          application/json: 
+          schema:
+            $ref: "#/components/schemas/ValidateRequest"
+      responses:
+        "202":
+          description: "OK"
+          content: string
+  /get-daily-word:
+    get:
+      summary: "GET get-daily-word"
+      parameters: 
+        - name: "uid"
+          in: "query"
+          required: true
+      responses:
+        "200":
+          description: "OK"
+          content: string
+  /word/load:
+    post:
+      summary: "POST load words"
+      responses:
+        "201":
+          description: "OK"
+
+components:
+  schemas:
+    ValidateRequest:
+      type: object
+      properties:
+        uid:
+          type: number
+          description: The unique identifier.
+        word:
+          type: string
+          description: The word associated with the UID.
+      required:
+        - uid
+        - word
