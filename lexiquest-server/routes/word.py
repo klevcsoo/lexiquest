@@ -28,6 +28,7 @@ async def load_words(db: db_dependency):
         db.commit()
         print(f"The '{word}' word is saved")
 
+
 @word.get("/get-daily-word", status_code=status.HTTP_200_OK)
 async def get_daily_word(uid: int,db: Session = Depends(get_db)):
     # Létezik-e a felhasználó
@@ -35,8 +36,14 @@ async def get_daily_word(uid: int,db: Session = Depends(get_db)):
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     # A user mai probálkozásai 
-    user_today_validates = db.query(models.Validate).filter(models.Validate.uid == uid and models.Validate.date == date.today())
-    if len(user_today_validates.all()) <=6 and len(user_today_validates.filter(models.Validate.result=="1;1;1;1;1").all()) == 0 :
-       raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User must attempt or solve the puzzle six times to access the daily word.")
+    user_today_validates = db.query(models.Validate).filter(
+        models.Validate.uid == uid, models.Validate.date == date.today())
+
+    has_used_all_attemps = len(user_today_validates.all()) >= 6
+    has_correct_guess = len(user_today_validates.filter(models.Validate.result == "1;1;1;1;1").all()) != 0
+
+    if not has_used_all_attemps or not has_correct_guess:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="User must attempt or solve the puzzle six "
+                                                                          "times to access the daily word.")
     words = db.query(models.Word).all()
     return words[get_daly_word_index(len(words))].content
