@@ -23,6 +23,11 @@ db_dependency = Annotated[Session, Depends(get_db)]
 
 @validate.post("/validate/", status_code=status.HTTP_201_CREATED)
 async def validatetion(guess: Guess, db: db_dependency):
+    # Létezik-e a felhasználó
+    user = db.query(models.User).filter(models.User.id == guess.uid).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+    # Validáció
     words = db.query(models.Word).all()
     validate = ValidateBase(
         uid = guess.uid,

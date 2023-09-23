@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, Integer, String, DateTime
+from sqlalchemy import Boolean, Column, Integer, String, DateTime, ForeignKey
 from database import Base
 
 class Word(Base):
@@ -15,7 +15,7 @@ class User(Base):
 class Validate(Base):
     __tablename__= "validate"
     id = Column(Integer, primary_key=True, index=True)
-    uid = Column(Integer)
+    uid = Column(Integer, ForeignKey('user.id'))
     date = Column(DateTime)
     guess = Column(String(50))
     result = Column(String(50))
