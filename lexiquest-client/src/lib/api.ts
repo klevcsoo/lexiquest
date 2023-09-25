@@ -1,5 +1,5 @@
 import {getDeviceID, getUserID} from "./identification";
-import {LS_KEY_USER_ID, USE_MOCK_API} from "./config";
+import {API_ORIGIN, LS_KEY_USER_ID, USE_MOCK_API} from "./config";
 import {LetterCorrectness} from "../types/LetterCorrectness";
 import {
     mockGetAttempHistory,
@@ -9,8 +9,7 @@ import {
 } from "./mockApi";
 import {AttemptHistoryData} from "../types/AttemptHistoryData";
 import {GameDayData} from "../types/GameDayData";
-
-const API_ORIGIN = "localhost:8000";
+import {updateAttemptHistory, updateSolution} from "./pubsub";
 
 export async function apiCreateUser() {
     if (USE_MOCK_API) return;
@@ -54,6 +53,9 @@ export async function apiValidation(guess: string): Promise<LetterCorrectness[]>
         throw new Error(`Validation Error: ${JSON.stringify(await response.json())}`);
     }
 
+    updateAttemptHistory();
+    updateSolution();
+
     return validationFromResponse(await response.text());
 }
 
@@ -70,7 +72,7 @@ export async function apiGetAttemptHistory(): Promise<AttemptHistoryData> {
         "uid": String(uid)
     });
 
-    const response = await fetch(`http://${API_ORIGIN}/get-current-day?${query}`, {
+    const response = await fetch(`http://${API_ORIGIN}/get-user-today-attempts?${query}`, {
         method: "GET"
     });
 

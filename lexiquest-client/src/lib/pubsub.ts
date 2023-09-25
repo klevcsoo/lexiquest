@@ -19,6 +19,7 @@ export function offAttemptHistory(callback: AttemptHistoryListener) {
 
 export function updateAttemptHistory() {
     apiGetAttemptHistory().then(value => {
+        console.log(value);
         attemptHistory = value;
         attemptHistoryListeners.forEach(callback => callback(attemptHistory));
     }).catch(console.error);

@@ -11,7 +11,7 @@ export function AttemptHistory(props: AttemptHistoryProps) {
     return (
         <Fragment>
             {props.attemptHistory.entries.sort((a, b) => {
-                return b.timestamp.getTime() - a.timestamp.getTime();
+                return a.timestamp.getTime() - b.timestamp.getTime();
             }).map((entry, attemptIndex, array) => (
                 <div key={attemptIndex} className="flex flex-row gap-4 justify-center ">
                     <p className="text-xl">
