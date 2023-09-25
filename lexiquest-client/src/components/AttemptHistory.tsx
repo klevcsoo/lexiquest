@@ -11,10 +11,16 @@ export function AttemptHistory(props: AttemptHistoryProps) {
     return (
         <Fragment>
             {props.attemptHistory.entries.sort((a, b) => {
-                return a.timestamp.getTime() - b.timestamp.getTime();
+                const nameA = a.word.toUpperCase();
+                const nameB = b.word.toUpperCase();
+
+                if (nameA < nameB) return -1;
+                if (nameA > nameB) return 1;
+
+                return 0;
             }).map((entry, attemptIndex, array) => (
                 <div key={attemptIndex} className="flex flex-row gap-4 justify-center ">
-                    <p className="text-xl">
+                    <p className="text-xl invisible">
                         <b>{array.length - attemptIndex}</b> / {MAX_DAILY_ATTEMPTS}
                     </p>
                     {entry.word.split("").map((char, characterIndex) => (
