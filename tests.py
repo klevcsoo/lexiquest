@@ -43,11 +43,12 @@ class Test():
         print(words[wp.get_daly_word_index(num_of_row)].content)
 
     async def clear():
-        # torli az osszes adatot
+        # torli a tester adatait
         dat = next(user.get_db())
-        dat.query(models.Validate).delete(synchronize_session=False)
-        dat.query(models.Log).delete(synchronize_session=False)
-        dat.query(models.User).delete(synchronize_session=False)
+        db_user = dat.query(models.User).filter(models.User.name == "tester").first()
+        dat.query(models.Validate).filter(models.Validate.uid == db_user.id).delete(synchronize_session=False)
+        dat.query(models.Log).filter(models.Log.uid == db_user.id).delete(synchronize_session=False)
+        dat.query(models.User).filter(models.User.uid == db_user.id).delete(synchronize_session=False)
         dat.commit()
         
             
