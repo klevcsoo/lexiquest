@@ -1,5 +1,5 @@
 import {AttemptHistoryData} from "../types/AttemptHistoryData";
-import {mockGetAttempHistory, mockGetSolutionOfTheDay} from "./mockApi";
+import {apiGetAttemptHistory, apiGetWordOfTheDay} from "./api";
 
 type AttemptHistoryListener = (attemptHistory: AttemptHistoryData) => void
 const attemptHistoryListeners: AttemptHistoryListener[] = [];
@@ -18,7 +18,7 @@ export function offAttemptHistory(callback: AttemptHistoryListener) {
 }
 
 export function updateAttemptHistory() {
-    mockGetAttempHistory().then(value => {
+    apiGetAttemptHistory().then(value => {
         attemptHistory = value;
         attemptHistoryListeners.forEach(callback => callback(attemptHistory));
     }).catch(console.error);
@@ -41,7 +41,7 @@ export function offSolution(callback: SolutionListener) {
 }
 
 export function updateSolution() {
-    mockGetSolutionOfTheDay().then(value => {
+    apiGetWordOfTheDay().then(value => {
         solution = value;
         solutionListeners.forEach(callback => callback(solution));
     }).catch(console.error);
