@@ -113,7 +113,7 @@ export async function apiGetWordOfTheDay(): Promise<string | undefined> {
         return undefined;
     }
 
-    return await response.text();
+    return (await response.text()).replace("\"", "");
 }
 
 export async function apiGetGameDay(): Promise<GameDayData> {
